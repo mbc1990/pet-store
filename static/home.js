@@ -8,7 +8,7 @@ var ctrl = {
           var resp = xmlHttp.responseText;
           var holder = document.getElementById("image_holder");
           console.log("resp",resp);
-          holder.setAttribute("src", JSON.parse(resp).ImageUrl);
+          holder.setAttribute("src", "/static/images/" + JSON.parse(resp).ImageUrl);
         }
       }
       xmlHttp.open("GET", "/next_image/", true);

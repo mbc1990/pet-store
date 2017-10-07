@@ -5,8 +5,10 @@ import (
   "fmt"
   "encoding/json"
   "os"
+  "time"
   "net/http"
   "html/template"
+  "strconv"
   "log"
   "io/ioutil"
   _ "github.com/lib/pq"
@@ -26,7 +28,6 @@ type Configuration struct {
   Password string
   Dbname   string
 }
-
 
 func main() {
   // Get consts
@@ -62,14 +63,55 @@ func home(w http.ResponseWriter, r *http.Request) {
 // Response object for the next_image api endpoint
 type NextImageResponse struct {
   ImageUrl string
+  ImageId string
 }
 
 // Return a new image for the user
 func nextImage(w http.ResponseWriter, r *http.Request) {
-  // TODO: Query database for next image
-  var nextImage string = "https://s-media-cache-ak0.pinimg.com/originals/86/09/a2/8609a24d00485b9d0463c24e2a4aec37.jpg"
-  resp := NextImageResponse{nextImage}
+
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+    "password=%s dbname=%s sslmode=disable",
+    Conf.Host, Conf.Port, Conf.User, Conf.Password, Conf.Dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+  fmt.Println("Successfully connected to pg")
+
+  // TODO: Join against preference_events to only get unseen images
+  sqlStatement := `  
+  SELECT * FROM images LIMIT 1
+  `
+  rows, err := db.Query(sqlStatement);
+  if err != nil {
+    panic(err)
+  }
+
+  var nextImage string
+  var imageIdStr string;
+  for rows.Next() {
+    var imageId int
+    var original_url string
+    var timestamp time.Time
+    err = rows.Scan(&imageId, &nextImage, &original_url, &timestamp)
+    if err != nil {
+      panic(err)
+    }
+    imageIdStr = strconv.Itoa(imageId)
+    if err != nil {
+      panic(err)
+    }
+  }
+
+  resp := NextImageResponse{nextImage, imageIdStr}
   js, err := json.Marshal(resp)
+  fmt.Println(resp)
   if err != nil {
     http.Error(w, err.Error(), http.StatusInternalServerError)
     return
@@ -122,5 +164,4 @@ func preferenceEvent(w http.ResponseWriter, r *http.Request) {
   }
 
   log.Println(p.Liked)
-  // TODO: Write result to database
 }
