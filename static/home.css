@@ -12,6 +12,21 @@
   margin: auto;
 }
 
+#training_header {
+  font-family: helvetica;
+}
+
+#instructions {
+  font-family: helvetica;
+}
+
+#image_holder {
+  max-width:700px;
+  max-height:500px;
+  width: auto;
+  height: auto;
+}
+
 #buttons {
   margin: 25px;
 }
