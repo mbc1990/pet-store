@@ -1,0 +1,30 @@
+#pet_shop_name {
+  font-family: helvetica;
+}
+
+#pet_shop_name_subheader {
+  font-family: helvetica;
+  font-style: italic;
+}
+
+#content {
+  width: 50%;
+  margin: auto;
+}
+
+
+#buttons {
+  margin: 25px;
+}
+
+button {
+  margin: 10px;
+}
+
+#like_button {
+  color: green;
+}
+
+#dislike_button {
+  color: red;
+}

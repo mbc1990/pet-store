@@ -1,0 +1,29 @@
+<html>
+  <head>
+     <link rel="stylesheet" href="/static/home.css">
+  </head>
+  <body>
+    <div id="masthead">
+      <h1 id="pet_shop_name">Welcome back to the pet store.</h1>
+      <p id="pet_shop_name_subheader">
+        The premier destsination for the cute animals
+      </p>
+    </div>
+    <div id="content">
+      <div id="image">
+        <img id="image_holder" style="width:500px; height:500px;" src="{{ . }}" />
+      </div>
+      <div id="buttons">
+        <button id="like_button"
+                onclick="ctrl.handleLike();">
+          I like this image
+        </button>
+        <button id="dislike_button"
+                onclick="ctrl.handleDislike();">
+          I do not like this image
+        </button>
+      </div>
+    </div>
+  </body>
+</html>
+<script src="/static/home.js"></script>
