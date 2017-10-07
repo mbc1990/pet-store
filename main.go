@@ -5,6 +5,7 @@ import (
   "net/http"
   "html/template"
   "log"
+  "io/ioutil"
 )
 
 type AnimalImage struct {
@@ -54,18 +55,20 @@ func nextImage(w http.ResponseWriter, r *http.Request) {
 
 // Struct for decoding preference request parameters
 type PreferenceParams struct {
-  liked bool
+  Liked string
 }
 
 // When a user likes or dislikes an image, we write the event to a database
 func preferenceEvent(w http.ResponseWriter, r *http.Request) {
-  decoder := json.NewDecoder(r.Body)
-  // TODO: This isn't decoding parameters correctly
-  var params PreferenceParams
-  err := decoder.Decode(&params)
+  body, err := ioutil.ReadAll(r.Body)
   if err != nil {
     panic(err)
   }
-  defer r.Body.Close()
-  log.Println(params.liked)
+
+  var p PreferenceParams
+  err = json.Unmarshal(body, &p)
+  if err != nil {
+    panic(err)
+  }
+  log.Println(p.Liked)
 }

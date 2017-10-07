@@ -17,20 +17,18 @@ var ctrl = {
   
   // Handle like 
   handleLike : function() {
-    console.log("Like clicked");
     this.nextImage();
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("POST", "/preference_event/", true);
-    xmlHttp.send(JSON.stringify({"liked": true}));
+    xmlHttp.send(JSON.stringify({"Liked": "true"}));
   },
   
   // Handle dislike
   handleDislike : function() {
-    console.log("Dislike clicked");
     this.nextImage();
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("POST", "/preference_event/", true);
-    xmlHttp.send(JSON.stringify({"liked": false}));
+    xmlHttp.send(JSON.stringify({"Liked": "false"}));
   }
 
 };
