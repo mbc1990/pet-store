@@ -9,7 +9,6 @@ import (
   "net/http"
   "html/template"
   "strconv"
-  "log"
   "io/ioutil"
   _ "github.com/lib/pq"
 )
@@ -111,7 +110,6 @@ func nextImage(w http.ResponseWriter, r *http.Request) {
 
   resp := NextImageResponse{nextImage, imageIdStr}
   js, err := json.Marshal(resp)
-  fmt.Println(resp)
   if err != nil {
     http.Error(w, err.Error(), http.StatusInternalServerError)
     return
@@ -123,11 +121,11 @@ func nextImage(w http.ResponseWriter, r *http.Request) {
 // Struct for decoding preference request parameters
 type PreferenceParams struct {
   Liked string
+  ImageId string
 }
 
 // When a user likes or dislikes an image, we write the event to a database
 func preferenceEvent(w http.ResponseWriter, r *http.Request) {
-  fmt.Println("Received prefernce event")
   body, err := ioutil.ReadAll(r.Body)
   if err != nil {
     panic(err)
@@ -153,15 +151,12 @@ func preferenceEvent(w http.ResponseWriter, r *http.Request) {
   if err != nil {
     panic(err)
   }
-  fmt.Println("Successfully connected to pg")
 
   sqlStatement := `  
   INSERT INTO preference_events (user_id, image_id, liked)
   VALUES ($1, $2, $3)`
-  _, err = db.Exec(sqlStatement, 1, 1, p.Liked) // TODO: get image id from client
+  _, err = db.Exec(sqlStatement, 1, p.ImageId, p.Liked)
   if err != nil {
     panic(err)
   }
-
-  log.Println(p.Liked)
 }
