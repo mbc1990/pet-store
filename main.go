@@ -83,10 +83,9 @@ func nextImage(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("Successfully connected to pg")
 
-	// TODO: Join against preference_events to only get unseen images
-	sqlStatement := `  
-  SELECT * FROM images LIMIT 1
-  `
+	// TODO: where user_id=...
+	// TODO: handle running out of images
+	sqlStatement := `select images.image_id, filename, original_url, images.timestamp from images left join preference_events on images.image_id=preference_events.image_id where preference_events.image_id is null limit 1`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		panic(err)
